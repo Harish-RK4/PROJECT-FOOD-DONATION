@@ -1,16 +1,35 @@
-# React + Vite
+# FoodConnect: Food Donation Web App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Goal:** Deliver a *production-ready web application* with seamless frontend-backend integration, scalable hosting, and robust monitoring/analytics. Our mission is to connect surplus food to those in need.
 
-Currently, two official plugins are available:
+## Project Tech Stack (Production-Ready)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+We are building a scalable, cost-efficient web application using the following modern stack:
 
-## React Compiler
+- **Backend** → [Supabase](https://supabase.com/) (Free, managed Postgres + auth + APIs)
+- **Deployment** → [Vercel](https://vercel.com/) (Free tier, serverless hosting)
+- **Version Control** → [GitHub](https://github.com/) (Free, collaborative repo management)
+- **Emails** → [Resend](https://resend.com/) (Free, transactional email service)
+- **Domains** → [Namecheap](https://www.namecheap.com/) (Domain cost only, DNS setup)
+- **Authentication** → [Clerk](https://clerk.dev/) (Free tier, user management & auth)
+- **DNS Management** → [Cloudflare](https://www.cloudflare.com/) (Free, CDN + DNS + security)
+- **Analytics** → [PostHog](https://posthog.com/) (Free, product analytics & event tracking)
+- **Error Tracking** → [Sentry](https://sentry.io/) (Free, monitoring & debugging)
+- **Vector Database** → [Pinecone](https://www.pinecone.io/) (Free tier, semantic search & embeddings)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the ESLint configuration
+## Local Development
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+To run this project locally:
+
+1. Clone the repository.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+4. Access the app at `http://localhost:5173`.
