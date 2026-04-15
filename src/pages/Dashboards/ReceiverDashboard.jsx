@@ -43,6 +43,26 @@ const ReceiverDashboard = () => {
     }
   };
 
+  const handleClaim = async (itemId) => {
+    if (!window.confirm("Are you sure you want to claim this donation? By claiming, you agree to coordinate pickup immediately.")) return;
+    
+    try {
+      const { error } = await supabase
+        .from('donations')
+        .update({ status: 'Reserved' })
+        .eq('id', itemId);
+        
+      if (error) throw error;
+      
+      // Instantly remove from local available list
+      setNearbyDonations(prev => prev.filter(item => item.id !== itemId));
+      alert("Successfully claimed! Please contact the donor using the provided details to coordinate collection.");
+    } catch (err) {
+      console.error("Error claiming donation:", err);
+      alert("Failed to claim donation.");
+    }
+  };
+
   useEffect(() => {
     fetchAvailableDonations();
   }, []);
@@ -110,7 +130,13 @@ const ReceiverDashboard = () => {
                     <span style={{ fontSize: '0.85rem' }}>{item.contact_info}</span>
                   </div>
                 )}
-                <button className="btn btn-primary claim-btn glow-effect" style={{ width: '100%', marginTop: '0.5rem' }}>Claim Details</button>
+                <button 
+                  onClick={() => handleClaim(item.id)}
+                  className="btn btn-primary claim-btn glow-effect" 
+                  style={{ width: '100%', marginTop: '0.5rem' }}
+                >
+                  Confirm Claim
+                </button>
               </div>
             </motion.div>
           ))}
