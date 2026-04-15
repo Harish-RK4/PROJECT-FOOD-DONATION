@@ -1,10 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { SignIn } from '@clerk/clerk-react';
+import { SignIn, useAuth } from '@clerk/clerk-react';
+import { useNavigate } from 'react-router-dom';
 import { ShieldCheck } from 'lucide-react';
 import './Login.css';
 
 const Login = () => {
+  const { userId } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (userId) {
+      navigate('/donor');
+    }
+  }, [userId, navigate]);
+
   return (
     <div className="auth-container">
       <motion.div 
@@ -19,8 +29,8 @@ const Login = () => {
         </div>
 
         <SignIn 
-          signUpFallbackRedirectUrl="/donor" 
-          fallbackRedirectUrl="/donor"
+          forceRedirectUrl="/donor"
+          signUpForceRedirectUrl="/donor"
           appearance={{
             elements: {
               card: "clerk-custom-card",
