@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import DonorDashboard from './pages/Dashboards/DonorDashboard';
 import ReceiverDashboard from './pages/Dashboards/ReceiverDashboard';
 import AdminDashboard from './pages/Dashboards/AdminDashboard';
+import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
 function App() {
@@ -17,9 +18,21 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/donor" element={<DonorDashboard />} />
-            <Route path="/receiver" element={<ReceiverDashboard />} />
-            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/donor" element={
+              <ProtectedRoute allowedRoles={['donor']}>
+                <DonorDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/receiver" element={
+              <ProtectedRoute allowedRoles={['receiver']}>
+                <ReceiverDashboard />
+              </ProtectedRoute>
+            } />
+            <Route path="/admin" element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminDashboard />
+              </ProtectedRoute>
+            } />
           </Routes>
         </main>
       </div>
