@@ -7,11 +7,13 @@ import DonorDashboard from './pages/Dashboards/DonorDashboard';
 import ReceiverDashboard from './pages/Dashboards/ReceiverDashboard';
 import AdminDashboard from './pages/Dashboards/AdminDashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import InteractiveCursor from './components/InteractiveCursor';
 import './App.css';
 
 function App() {
   return (
     <BrowserRouter>
+      <InteractiveCursor />
       <div className="app-container">
         <Navbar />
         <main>
