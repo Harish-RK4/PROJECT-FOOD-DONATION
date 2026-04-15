@@ -17,7 +17,8 @@ const Navbar = () => {
         </SignedOut>
         <SignedIn>
           <Link to="/donor" className="btn btn-secondary" style={{ marginRight: '0.5rem', border: 'none', fontSize: '0.9rem' }}>Donor Portal</Link>
-          <Link to="/receiver" className="btn btn-primary" style={{ marginRight: '1rem', padding: '0.5rem 1rem', fontSize: '0.9rem' }}>Receiver Portal</Link>
+          <Link to="/receiver" className="btn btn-primary" style={{ marginRight: '0.5rem', padding: '0.5rem 1rem', fontSize: '0.9rem' }}>Receiver Portal</Link>
+          <Link to="/admin" className="btn btn-secondary" style={{ marginRight: '1rem', border: '1px solid rgba(239, 68, 68, 0.4)', color: '#ef4444', fontSize: '0.9rem' }}>SysAdmin</Link>
           <UserButton afterSignOutUrl="/" />
         </SignedIn>
       </div>
