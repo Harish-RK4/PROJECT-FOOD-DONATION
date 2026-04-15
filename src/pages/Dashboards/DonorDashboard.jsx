@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Package, Clock, CheckCircle } from 'lucide-react';
+import { Package, Clock, CheckCircle, Trash2 } from 'lucide-react';
 import { useAuth } from '@clerk/clerk-react';
 import { supabase } from '../../lib/supabaseClient';
 import NewDonationModal from '../../components/NewDonationModal';
@@ -11,6 +11,24 @@ const DonorDashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [recentDonations, setRecentDonations] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const handleDelete = async (itemId) => {
+    if (!window.confirm("Are you sure you want to delete this donation?")) return;
+    
+    try {
+      const { error } = await supabase
+        .from('donations')
+        .delete()
+        .eq('id', itemId);
+        
+      if (error) throw error;
+      // Filter it out from local state instantly for snappy UI
+      setRecentDonations(prev => prev.filter(item => item.id !== itemId));
+    } catch (error) {
+      console.error("Error deleting donation:", error);
+      alert("Failed to delete donation");
+    }
+  };
 
   const fetchDonations = async () => {
     try {
@@ -89,16 +107,17 @@ const DonorDashboard = () => {
             <table className="donations-table">
               <thead>
                 <tr>
-                  <th>Food Type</th>
+                  <th>Food Item</th>
                   <th>Quantity</th>
                   <th>Status</th>
-                  <th>Posted</th>
+                  <th>Posted Date</th>
+                  <th>Action</th>
                 </tr>
               </thead>
               <tbody>
-                {loading && <tr><td colSpan="4" className="text-muted" style={{textAlign: "center", padding: '2rem'}}>Loading database sync...</td></tr>}
+                {loading && <tr><td colSpan="5" className="text-muted" style={{textAlign: "center", padding: '2rem'}}>Loading database sync...</td></tr>}
                 {!loading && recentDonations.length === 0 && (
-                  <tr><td colSpan="4" className="text-muted" style={{textAlign: "center", padding: '2rem'}}>No donations found. Submit your first one!</td></tr>
+                  <tr><td colSpan="5" className="text-muted" style={{textAlign: "center", padding: '2rem'}}>No donations found. Submit your first one!</td></tr>
                 )}
                 {recentDonations.map((item) => (
                   <tr key={item.id}>
@@ -110,6 +129,15 @@ const DonorDashboard = () => {
                       </span>
                     </td>
                     <td className="text-muted">{new Date(item.created_at).toLocaleDateString()}</td>
+                    <td>
+                      <button 
+                        onClick={() => handleDelete(item.id)}
+                        style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '0.25rem' }}
+                        title="Delete Donation"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
