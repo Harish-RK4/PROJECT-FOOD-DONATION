@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useAuth } from '@clerk/clerk-react';
+import { supabase } from '../lib/supabaseClient';
 import { X, UploadCloud } from 'lucide-react';
 import './NewDonationModal.css';
 
@@ -11,12 +13,39 @@ const NewDonationModal = ({ isOpen, onClose }) => {
     description: '',
   });
 
-  const handleSubmit = (e) => {
+  const { userId } = useAuth();
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Simulate submission
-    setTimeout(() => {
+    setLoading(true);
+    
+    try {
+      const { error } = await supabase.from('donations').insert([
+        { 
+          donor_id: userId || 'unknown_donor',
+          title: formData.title,
+          quantity: formData.quantity,
+          expiry_date: formData.expiryDate ? new Date(formData.expiryDate).toISOString() : null,
+          status: 'Available',
+          type: 'General', // Would be a dropdown selection in a larger app
+        }
+      ]);
+
+      if (error) throw error;
+      
+      // If successful, reset and close
+      setFormData({ title: '', quantity: '', expiryDate: '', description: '' });
       onClose();
-    }, 500);
+      
+      // Optionally trigger a window reload or prop callback to refresh dashboard data
+      window.location.reload(); 
+    } catch (error) {
+      console.error("Error inserting donation:", error);
+      alert("Failed to submit donation. See console for details.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
