@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useSignIn, useSignUp } from '@clerk/clerk-react';
+import { useSignIn, useSignUp, useAuth } from '@clerk/clerk-react';
 import { ShieldCheck, Mail, ArrowRight, AlertCircle } from 'lucide-react';
 import './Login.css';
 
 const Login = () => {
   const { isLoaded, signIn, setActive } = useSignIn();
   const { isLoaded: isSignUpLoaded, signUp, setActive: setSignUpActive } = useSignUp();
+  const { userId } = useAuth();
   
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState('');
@@ -18,6 +19,13 @@ const Login = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const defaultRole = searchParams.get('role') || 'donor';
+
+  // If already logged in, redirect away from login screen
+  useEffect(() => {
+    if (userId) {
+      navigate(`/${defaultRole}`);
+    }
+  }, [userId, navigate, defaultRole]);
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
@@ -82,6 +90,22 @@ const Login = () => {
         }
       }
     } catch (err) {
+      console.error(err);
+      // Handle strict mode / race condition double-submit successful state
+      const isAlreadyVerified = err.errors && err.errors[0]?.longMessage?.toLowerCase().includes('already been verified');
+      
+      if (isAlreadyVerified) {
+        if (signIn && signIn.status === "complete" && signIn.createdSessionId) {
+          await setActive({ session: signIn.createdSessionId });
+          setStep(3);
+          return;
+        } else if (signUp && signUp.status === "complete" && signUp.createdSessionId) {
+          await setSignUpActive({ session: signUp.createdSessionId });
+          setStep(3);
+          return;
+        }
+      }
+      
       setErrorMsg(err.errors ? err.errors[0].longMessage : "Invalid verification code");
       setOtp(['', '', '', '', '', '']);
     } finally {
