@@ -2,9 +2,12 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Globe, Shield, Zap } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 import './Home.css';
 
 const Home = () => {
+  const { t } = useTranslation();
+
   const containerVariants = {
     hidden: { opacity: 0 },
     show: {
@@ -51,24 +54,24 @@ const Home = () => {
         >
           <motion.div variants={itemVariants} className="hero-badge">
             <span className="badge-pulse"></span>
-            FoodConnect Enterprise Edition 1.0
+            {t('home.badge')}
           </motion.div>
 
           <motion.h1 variants={itemVariants} className="grand-title">
-            Zero Hunger.<br/>
-            Infinite <span className="text-gradient">Impact.</span>
+            {t('home.title1')}<br/>
+            <span className="text-gradient">{t('home.title2')}</span>
           </motion.h1>
           
           <motion.p variants={itemVariants} className="grand-subtitle">
-            The professional logistics network for surplus food allocation. Seamlessly route verified donations to NGOs with military-grade precision and real-time tracing.
+            {t('home.subtitle')}
           </motion.p>
           
           <motion.div variants={itemVariants} className="hero-actions">
             <Link to="/login?role=donor" className="btn btn-primary btn-lg">
-              Start Donating <ArrowRight size={18} style={{ marginLeft: '8px' }}/>
+              {t('home.donateBtn')} <ArrowRight size={18} style={{ marginLeft: '8px' }}/>
             </Link>
             <Link to="/login?role=receiver" className="btn btn-secondary btn-lg">
-              Partner API Access
+              {t('home.apiBtn')}
             </Link>
           </motion.div>
         </motion.div>
@@ -83,15 +86,15 @@ const Home = () => {
           viewport={{ once: true, margin: "-50px" }}
           transition={{ duration: 0.8 }}
         >
-          <h2 className="section-title">Built for Global Scale</h2>
-          <p>Advanced metrics and unbreakable security infrastructure.</p>
+          <h2 className="section-title">{t('home.featuresTitle')}</h2>
+          <p>{t('home.featuresSub')}</p>
         </motion.div>
 
         <div className="feature-grid">
           {[
-            { icon: <Zap size={28}/>, title: "Real-Time Routing", desc: "Our AI engine matches food volatility with live NGO proximity data instantly." },
-            { icon: <Shield size={28}/>, title: "Verified Network", desc: "Rigorous KYC checks ensure your donations reach legally authorized endpoints." },
-            { icon: <Globe size={28}/>, title: "Carbon Analytics", desc: "Automated ESG compliance reporting detailing exact greenhouse gas diversion." }
+            { icon: <Zap size={28}/>, title: t('home.f1Title'), desc: t('home.f1Desc') },
+            { icon: <Shield size={28}/>, title: t('home.f2Title'), desc: t('home.f2Desc') },
+            { icon: <Globe size={28}/>, title: t('home.f3Title'), desc: t('home.f3Desc') }
           ].map((feat, idx) => (
             <motion.div 
               key={idx} 

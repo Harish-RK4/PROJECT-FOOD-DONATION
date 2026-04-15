@@ -5,6 +5,7 @@ import posthog from 'posthog-js';
 import { ClerkProvider } from '@clerk/clerk-react';
 import App from './App.jsx';
 import './index.css';
+import './lib/i18n';
 
 // Initialize Sentry Error Tracking
 Sentry.init({
