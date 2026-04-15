@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSignIn, useSignUp, useAuth } from '@clerk/clerk-react';
@@ -16,6 +16,7 @@ const Login = () => {
   const [errorMsg, setErrorMsg] = useState('');
   const [loading, setLoading] = useState(false);
   
+  const handlingRef = useRef(false);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const defaultRole = searchParams.get('role') || 'donor';
@@ -29,11 +30,16 @@ const Login = () => {
 
   const handleSendOtp = async (e) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || handlingRef.current) return;
+    handlingRef.current = true;
     setErrorMsg('');
     setLoading(true);
     
-    if (!isLoaded || !isSignUpLoaded) return;
+    if (!isLoaded || !isSignUpLoaded) {
+      handlingRef.current = false;
+      setLoading(false);
+      return;
+    }
     
     try {
       try {
@@ -41,7 +47,7 @@ const Login = () => {
           identifier: email,
         });
         
-        const isEmailCodeFactor = supportedFirstFactors.find(
+        const isEmailCodeFactor = supportedFirstFactors?.find(
           (factor) => factor.strategy === "email_code"
         );
         
@@ -65,12 +71,15 @@ const Login = () => {
       console.error(err);
       setErrorMsg(err.errors ? err.errors[0].longMessage : err.message);
     } finally {
+      handlingRef.current = false;
       setLoading(false);
     }
   };
 
   const handleVerifyOtp = async (e) => {
     e.preventDefault();
+    if (handlingRef.current) return;
+    handlingRef.current = true;
     setErrorMsg('');
     setLoading(true);
     const code = otp.join('');
@@ -91,24 +100,28 @@ const Login = () => {
       }
     } catch (err) {
       console.error(err);
-      // Handle strict mode / race condition double-submit successful state
+      
       const isAlreadyVerified = err.errors && err.errors[0]?.longMessage?.toLowerCase().includes('already been verified');
       
       if (isAlreadyVerified) {
-        if (signIn && signIn.status === "complete" && signIn.createdSessionId) {
+        if (signIn && signIn.createdSessionId) {
           await setActive({ session: signIn.createdSessionId });
           setStep(3);
           return;
-        } else if (signUp && signUp.status === "complete" && signUp.createdSessionId) {
+        } else if (signUp && signUp.createdSessionId) {
           await setSignUpActive({ session: signUp.createdSessionId });
           setStep(3);
           return;
+        } else {
+          // Absolute fallback if session ID is trapped in Clerk cache
+          window.location.reload(); 
         }
+      } else {
+        setErrorMsg(err.errors ? err.errors[0].longMessage : "Invalid verification code");
+        setOtp(['', '', '', '', '', '']);
       }
-      
-      setErrorMsg(err.errors ? err.errors[0].longMessage : "Invalid verification code");
-      setOtp(['', '', '', '', '', '']);
     } finally {
+      handlingRef.current = false;
       setLoading(false);
     }
   };
