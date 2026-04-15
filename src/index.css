@@ -1,27 +1,32 @@
 :root {
-  /* Color Palette */
-  --primary: #4F46E5; /* Vibrant Indigo */
-  --primary-hover: #4338ca;
-  --secondary: #10B981; /* Fresh Emerald */
-  --secondary-hover: #059669;
-  --accent: #F59E0B; /* Warm Amber */
-  --background: #FAFAFA;
-  --surface: #FFFFFF;
-  --surface-alt: #F3F4F6;
-  --text-main: #1F2937;
-  --text-muted: #6B7280;
-  --border: #E5E7EB;
+  /* Ultra-Professional Linear/Vercel Dark Theme */
+  --primary: #10b981; /* Emerald */
+  --primary-hover: #059669;
+  --secondary: #3b82f6; /* Subtle Blue */
+  --accent: #f59e0b; /* Trusted Gold */
+  
+  --background: #000000;
+  --surface: #09090b;
+  --surface-alt: #18181b;
+  
+  --text-main: #fafafa;
+  --text-muted: #a1a1aa;
+  
+  --border: rgba(255, 255, 255, 0.1);
+  --border-focus: rgba(16, 185, 129, 0.5);
   
   /* Radii & Shadows */
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 20px;
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --radius-sm: 8px;
+  --radius-md: 16px;
+  --radius-lg: 24px;
+  
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+  --shadow-md: 0 8px 30px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 40px rgba(16, 185, 129, 0.15);
 
   /* Fonts */
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  color-scheme: dark;
 }
 
 * {
@@ -33,8 +38,10 @@
 body {
   background-color: var(--background);
   color: var(--text-main);
-  line-height: 1.5;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  background-image: radial-gradient(circle at center, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 a {
@@ -42,7 +49,6 @@ a {
   text-decoration: none;
 }
 
-/* Base Layout utility */
 .app-container {
   display: flex;
   flex-direction: column;
@@ -53,43 +59,52 @@ main {
   flex: 1;
 }
 
-/* Common premium UI classes */
+/* Professional Surface Paneling */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: var(--surface);
+  border: 1px solid var(--border);
   box-shadow: var(--shadow-md);
   border-radius: var(--radius-md);
+  position: relative;
+  overflow: hidden;
 }
 
+/* Grand Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.75rem 1.5rem;
-  border-radius: var(--radius-sm);
+  padding: 0.8rem 1.5rem;
+  border-radius: 99px;
   font-weight: 500;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  border: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  border: 1px solid transparent;
 }
 
 .btn-primary {
-  background-color: var(--primary);
-  color: white;
+  background-color: var(--text-main);
+  color: var(--background);
 }
+
 .btn-primary:hover {
-  background-color: var(--primary-hover);
+  background-color: #e4e4e7;
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 10px 20px rgba(255,255,255,0.1);
 }
 
 .btn-secondary {
-  background-color: var(--surface);
+  background-color: transparent;
   color: var(--text-main);
-  border: 1px solid var(--border);
+  border-color: var(--border);
 }
+
 .btn-secondary:hover {
   background-color: var(--surface-alt);
+  border-color: rgba(255,255,255,0.2);
+}
+
+.glow-effect {
+  box-shadow: 0 0 20px rgba(16, 185, 129, 0.4);
 }

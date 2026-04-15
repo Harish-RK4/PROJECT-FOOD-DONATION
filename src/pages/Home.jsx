@@ -1,122 +1,93 @@
-import React, { useEffect } from 'react';
-import { motion, useAnimation } from 'framer-motion';
+import React from 'react';
+import { motion } from 'framer-motion';
 import { Link } from 'react-router-dom';
-import { ArrowRight, Leaf, Users, ShieldCheck, HeartPulse } from 'lucide-react';
+import { ArrowRight, Globe, Shield, Zap } from 'lucide-react';
 import './Home.css';
 
 const Home = () => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.15 }
+    }
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: [0.16, 1, 0.3, 1] } }
+  };
+
   return (
     <div className="home-container">
-      {/* Hyper-Modern Hero Section */}
-      <section className="hero-section">
-        {/* Animated Mesh Gradient Background */}
-        <div className="hero-bg-blobs">
-          <div className="blob-1"></div>
-          <div className="blob-2"></div>
-          <div className="blob-3"></div>
-        </div>
-        <div className="hero-overlay"></div>
-
-        <div className="hero-content">
-          <motion.div 
-            className="hero-pill"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: "easeOut" }}
-          >
-            <HeartPulse size={16} color="#34d399" />
-            <span>Over 10,000 meals distributed this month</span>
+      {/* Grand Professional Hero */}
+      <section className="grand-hero">
+        <div className="hero-glow-bg"></div>
+        
+        <motion.div 
+          className="hero-content"
+          variants={containerVariants}
+          initial="hidden"
+          animate="show"
+        >
+          <motion.div variants={itemVariants} className="hero-badge">
+            <span className="badge-pulse"></span>
+            FoodConnect Enterprise Edition 1.0
           </motion.div>
 
-          <motion.h1 
-            className="hero-title"
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1, ease: "easeOut" }}
-          >
-            Ending Hunger.<br />
-            <span className="highlight-text">Together.</span>
+          <motion.h1 variants={itemVariants} className="grand-title">
+            Zero Hunger.<br/>
+            Infinite <span className="text-gradient">Impact.</span>
           </motion.h1>
           
-          <motion.p 
-            className="hero-subtitle"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
-          >
-            A smart, elegant platform seamlessly bridging the gap between surplus food and communities in critical need. Be the change today.
+          <motion.p variants={itemVariants} className="grand-subtitle">
+            The professional logistics network for surplus food allocation. Seamlessly route verified donations to NGOs with military-grade precision and real-time tracing.
           </motion.p>
           
-          <motion.div 
-            className="hero-cta-group"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-          >
-            <Link to="/login?role=donor" className="btn glow-btn btn-lg">
-              Donate Food <ArrowRight size={20} style={{ marginLeft: '8px' }}/>
+          <motion.div variants={itemVariants} className="hero-actions">
+            <Link to="/login?role=donor" className="btn btn-primary btn-lg">
+              Start Donating <ArrowRight size={18} style={{ marginLeft: '8px' }}/>
             </Link>
-            <Link to="/login?role=receiver" className="btn glass-btn btn-lg">
-              Claim Donations
+            <Link to="/login?role=receiver" className="btn btn-secondary btn-lg">
+              Partner API Access
             </Link>
           </motion.div>
-        </div>
+        </motion.div>
       </section>
 
-      {/* Modern Bento Box Impact Section */}
-      <section className="impact-section">
+      {/* Sleek Features Section */}
+      <section className="grand-features">
         <motion.div 
-          className="impact-header"
-          initial={{ opacity: 0, y: 30 }}
+          className="section-header"
+          initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
+          viewport={{ once: true, margin: "-50px" }}
+          transition={{ duration: 0.8 }}
         >
-          <h2>Measurable Impact.</h2>
-          <p>Real-time telemetry on how FoodConnect is changing the world.</p>
+          <h2 className="section-title">Built for Global Scale</h2>
+          <p>Advanced metrics and unbreakable security infrastructure.</p>
         </motion.div>
 
-        <div className="bento-grid">
-          <motion.div 
-            className="bento-card large"
-            initial={{ opacity: 0, scale: 0.95 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <div className="pattern-dots"></div>
-            <Leaf size={48} style={{ marginBottom: '2rem', opacity: 0.8 }} />
-            <h3>12.4k</h3>
-            <p>Pounds of CO₂ Emissions Prevented</p>
-          </motion.div>
-
-          <motion.div 
-            className="bento-card"
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            <div className="bento-icon" style={{ background: 'rgba(79, 70, 229, 0.1)', color: '#4f46e5' }}>
-              <Users size={32} />
-            </div>
-            <h3>450+</h3>
-            <p>Verified Partner NGOs</p>
-          </motion.div>
-
-          <motion.div 
-            className="bento-card"
-            initial={{ opacity: 0, x: 30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <div className="bento-icon" style={{ background: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b' }}>
-              <ShieldCheck size={32} />
-            </div>
-            <h3>100%</h3>
-            <p>Secure & Transparent Routing</p>
-          </motion.div>
+        <div className="feature-grid">
+          {[
+            { icon: <Zap size={28}/>, title: "Real-Time Routing", desc: "Our AI engine matches food volatility with live NGO proximity data instantly." },
+            { icon: <Shield size={28}/>, title: "Verified Network", desc: "Rigorous KYC checks ensure your donations reach legally authorized endpoints." },
+            { icon: <Globe size={28}/>, title: "Carbon Analytics", desc: "Automated ESG compliance reporting detailing exact greenhouse gas diversion." }
+          ].map((feat, idx) => (
+            <motion.div 
+              key={idx} 
+              className="feature-card glass-panel"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.6, delay: idx * 0.15 }}
+            >
+              <div className="card-spotlight"></div>
+              <div className="feature-icon">{feat.icon}</div>
+              <h3>{feat.title}</h3>
+              <p>{feat.desc}</p>
+            </motion.div>
+          ))}
         </div>
       </section>
     </div>
