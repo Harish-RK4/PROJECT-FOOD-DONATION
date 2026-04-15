@@ -29,49 +29,42 @@ const InteractiveCursor = () => {
     window.addEventListener('mousemove', (event) => {
       mouse.x = event.x;
       mouse.y = event.y;
-      // Spawn 1-2 particles on mouse move
       for (let i = 0; i < 2; i++) {
-        particlesArray.push(new Particle());
+        particlesArray.push(createParticle(mouse.x, mouse.y));
       }
     });
 
-    class Particle {
-      constructor() {
-        this.x = mouse.x;
-        this.y = mouse.y;
-        this.size = Math.random() * 2.5 + 0.5;
-        this.speedX = Math.random() * 2 - 1;
-        this.speedY = Math.random() * 2 - 1;
-        this.life = 100; // life in frames
-        // We use our primary emerald color for the star glow
-        this.color = `rgba(16, 185, 129, ${Math.random() * 0.8 + 0.2})`;
-      }
-      
-      update() {
-        this.x += this.speedX;
-        this.y += this.speedY;
-        this.life -= 2;
-        if (this.size > 0.1) this.size -= 0.02;
-      }
-      
-      draw() {
-        ctx.save();
-        ctx.translate(this.x, this.y);
-        ctx.beginPath();
-        
-        // Draw a professional 4-point star
-        for (let i = 0; i < 8; i++) {
-          ctx.rotate(Math.PI / 4);
-          ctx.lineTo(0, 0 - (i % 2 === 0 ? this.size * 2 : this.size / 2));
+    function createParticle(x, y) {
+      return {
+        x: x,
+        y: y,
+        size: Math.random() * 2.5 + 0.5,
+        speedX: Math.random() * 2 - 1,
+        speedY: Math.random() * 2 - 1,
+        life: 100,
+        color: `rgba(16, 185, 129, ${Math.random() * 0.8 + 0.2})`,
+        update() {
+          this.x += this.speedX;
+          this.y += this.speedY;
+          this.life -= 2;
+          if (this.size > 0.1) this.size -= 0.02;
+        },
+        draw() {
+          ctx.save();
+          ctx.translate(this.x, this.y);
+          ctx.beginPath();
+          for (let i = 0; i < 8; i++) {
+            ctx.rotate(Math.PI / 4);
+            ctx.lineTo(0, 0 - (i % 2 === 0 ? this.size * 2 : this.size / 2));
+          }
+          ctx.closePath();
+          ctx.fillStyle = this.color;
+          ctx.shadowBlur = 10;
+          ctx.shadowColor = '#10b981';
+          ctx.fill();
+          ctx.restore();
         }
-        
-        ctx.closePath();
-        ctx.fillStyle = this.color;
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = '#10b981';
-        ctx.fill();
-        ctx.restore();
-      }
+      };
     }
 
     function handleParticles() {
