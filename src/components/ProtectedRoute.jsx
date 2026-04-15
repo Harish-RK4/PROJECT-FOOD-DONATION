@@ -1,20 +1,15 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
+import { useAuth } from '@clerk/clerk-react';
 
-// This is a placeholder for actual Clerk/JWT Auth check
 const ProtectedRoute = ({ children, allowedRoles = [] }) => {
-  // Mock auth state (Assume user is logged in for local dev until real Auth is connected)
-  const isAuthenticated = true;
-  const userRole = 'donor'; // Mock role
+  const { isLoaded, userId } = useAuth();
   
-  if (!isAuthenticated) {
+  if (!isLoaded) return <div style={{padding: '2rem'}}>Loading Secure Session...</div>;
+
+  if (!userId) {
     return <Navigate to="/login" replace />;
   }
-
-  // Once Clerk is connected, we will verify role against allowedRoles
-  // if (allowedRoles.length && !allowedRoles.includes(userRole)) {
-  //   return <Navigate to="/" replace />;
-  // }
 
   return children;
 };
