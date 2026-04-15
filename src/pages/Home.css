@@ -15,17 +15,34 @@
   margin-top: -72px; /* Ignore navbar space */
 }
 
-/* Subtele, elegant background glow, avoiding bloated blobs */
+/* Majestic Rotating Ambient Orb */
 .hero-glow-bg {
   position: absolute;
-  top: -20%;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
   width: 800px;
-  height: 600px;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, transparent 70%);
+  height: 800px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(16, 185, 129, 0.2) 60deg,
+    transparent 120deg,
+    rgba(255, 255, 255, 0.1) 180deg,
+    transparent 240deg,
+    rgba(16, 185, 129, 0.3) 300deg,
+    transparent 360deg
+  );
+  filter: blur(100px);
   z-index: 0;
   pointer-events: none;
+  animation: spin-orb 15s linear infinite;
+  opacity: 0.8;
+}
+
+@keyframes spin-orb {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
 .hero-content {

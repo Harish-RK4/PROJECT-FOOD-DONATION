@@ -24,6 +24,25 @@ const Home = () => {
       <section className="grand-hero">
         <div className="hero-glow-bg"></div>
         
+        {/* Abstract Rotating Background Mesh */}
+        <motion.div 
+          className="hero-abstract-mesh"
+          animate={{ rotate: 360 }}
+          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+          style={{ position: 'absolute', top: '50%', left: '50%', x: '-50%', y: '-50%', zIndex: 1, opacity: 0.05, pointerEvents: 'none' }}
+        >
+          <Globe size={800} strokeWidth={0.5} />
+        </motion.div>
+        
+        <motion.div 
+          className="hero-abstract-mesh-inner"
+          animate={{ rotate: -360 }}
+          transition={{ duration: 60, repeat: Infinity, ease: "linear" }}
+          style={{ position: 'absolute', top: '50%', left: '50%', x: '-50%', y: '-50%', zIndex: 1, opacity: 0.03, pointerEvents: 'none' }}
+        >
+          <Globe size={600} strokeWidth={0.5} />
+        </motion.div>
+        
         <motion.div 
           className="hero-content"
           variants={containerVariants}
