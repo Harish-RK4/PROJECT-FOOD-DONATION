@@ -1,9 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Package, Clock, CheckCircle } from 'lucide-react';
+import NewDonationModal from '../../components/NewDonationModal';
 import './DonorDashboard.css';
 
 const DonorDashboard = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   // Mock Data
   const donationStats = [
     { title: "Available", value: 3, icon: <Package size={24} />, color: "var(--primary)" },
@@ -49,7 +52,13 @@ const DonorDashboard = () => {
         <div className="donations-list glass-panel">
           <div className="list-header">
             <h3>Recent Donations</h3>
-            <button className="btn btn-primary" style={{ padding: '0.5rem 1rem' }}>+ New Donation</button>
+            <button 
+              className="btn btn-primary" 
+              style={{ padding: '0.5rem 1rem' }}
+              onClick={() => setIsModalOpen(true)}
+            >
+              + New Donation
+            </button>
           </div>
           
           <div className="table-responsive">
@@ -80,6 +89,8 @@ const DonorDashboard = () => {
           </div>
         </div>
       </div>
+      
+      <NewDonationModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
     </div>
   );
 };
