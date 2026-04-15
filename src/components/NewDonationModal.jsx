@@ -36,6 +36,7 @@ const NewDonationModal = ({ isOpen, onClose }) => {
     quantity: '',
     expiryDate: '',
     address: '',
+    contactInfo: '',
     description: '',
   });
 
@@ -70,6 +71,7 @@ const NewDonationModal = ({ isOpen, onClose }) => {
           title: formData.title,
           quantity: formData.quantity,
           address: formData.address,
+          contact_info: formData.contactInfo,
           latitude: position?.lat || null,
           longitude: position?.lng || null,
           expiry_date: formData.expiryDate ? new Date(formData.expiryDate).toISOString() : null,
@@ -134,6 +136,11 @@ const NewDonationModal = ({ isOpen, onClose }) => {
               <div className="form-group">
                 <label>Pickup Address</label>
                 <input required type="text" placeholder="e.g. 123 Main St, New York" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
+              </div>
+
+              <div className="form-group">
+                <label>Contact Details</label>
+                <input required type="text" placeholder="e.g. +1 234 567 8900" value={formData.contactInfo} onChange={e => setFormData({...formData, contactInfo: e.target.value})} />
               </div>
 
               <div className="form-group">

@@ -99,12 +99,18 @@ const ReceiverDashboard = () => {
               </div>
               <p className="donation-type">{item.quantity} • {item.type}</p>
               
-              <div className="card-bottom">
+              <div className="card-bottom" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '0.5rem' }}>
                 <div className="location-info">
                   <MapPin size={14} color="var(--primary)" />
                   <span>{item.address || 'Address hidden pending claim'}</span>
                 </div>
-                <button className="btn btn-primary claim-btn glow-effect">Claim Details</button>
+                {item.contact_info && (
+                  <div className="location-info" style={{ color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                    <Phone size={14} color="var(--secondary)" />
+                    <span style={{ fontSize: '0.85rem' }}>{item.contact_info}</span>
+                  </div>
+                )}
+                <button className="btn btn-primary claim-btn glow-effect" style={{ width: '100%', marginTop: '0.5rem' }}>Claim Details</button>
               </div>
             </motion.div>
           ))}
@@ -128,6 +134,7 @@ const ReceiverDashboard = () => {
                 <Popup>
                   <strong>{item.title}</strong><br/>
                   {item.quantity}<br/>
+                  {item.contact_info && <span style={{display: 'flex', alignItems: 'center', gap: '4px', margin: '4px 0'}}><Phone size={12}/> {item.contact_info}</span>}
                   <span style={{color: '#10b981'}}>Claim Available</span>
                 </Popup>
               </Marker>
