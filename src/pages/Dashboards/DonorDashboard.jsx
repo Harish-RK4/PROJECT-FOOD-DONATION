@@ -48,8 +48,8 @@ const DonorDashboard = () => {
         ))}
       </div>
 
-      <div className="dashboard-content">
-        <div className="donations-list glass-panel">
+      <div className="dashboard-content" style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap' }}>
+        <div className="donations-list glass-panel" style={{ flex: '2 1 600px' }}>
           <div className="list-header">
             <h3>Recent Donations</h3>
             <button 
@@ -86,6 +86,36 @@ const DonorDashboard = () => {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+
+        <div className="impact-tracker glass-panel" style={{ flex: '1 1 300px', display: 'flex', flexDirection: 'column', gap: '1.5rem', padding: '2rem' }}>
+          <div className="list-header" style={{ marginBottom: '0' }}>
+            <h3>Your Impact Score</h3>
+          </div>
+          <div className="impact-score">
+            <h1 style={{ fontSize: '3rem', color: 'var(--primary)', lineHeight: '1' }}>8.2k</h1>
+            <p className="text-muted">Total kg of food saved from landfills</p>
+          </div>
+          
+          <div className="impact-progress-group">
+            <div className="progress-label" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: '500' }}>
+              <span>Monthly Goal</span>
+              <span>10k kg</span>
+            </div>
+            <div className="progress-bar-bg" style={{ width: '100%', height: '10px', backgroundColor: 'var(--surface-alt)', borderRadius: '99px', overflow: 'hidden' }}>
+              <motion.div 
+                className="progress-bar-fill" 
+                style={{ height: '100%', backgroundColor: 'var(--accent)' }} 
+                initial={{ width: 0 }}
+                animate={{ width: '82%' }}
+                transition={{ duration: 1, delay: 0.2 }}
+              />
+            </div>
+          </div>
+          
+          <div style={{ marginTop: 'auto', paddingTop: '1rem', borderTop: '1px solid var(--border)', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+            <p>You are in the top <strong>5%</strong> of donors in your region this month! Keep it up!</p>
           </div>
         </div>
       </div>
