@@ -1,23 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Package, Clock, CheckCircle } from 'lucide-react';
+import { useAuth } from '@clerk/clerk-react';
+import { supabase } from '../../lib/supabaseClient';
 import NewDonationModal from '../../components/NewDonationModal';
 import './DonorDashboard.css';
 
 const DonorDashboard = () => {
+  const { userId } = useAuth();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [recentDonations, setRecentDonations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  // Mock Data
+  const fetchDonations = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('donations')
+        .select('*')
+        .eq('donor_id', userId || 'unknown')
+        .order('created_at', { ascending: false });
+        
+      if (error) throw error;
+      setRecentDonations(data || []);
+    } catch (error) {
+      console.error("Error fetching donations:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchDonations();
+  }, [userId]);
+
+  // Dynamic status counting
+  const availableCount = recentDonations.filter(d => d.status === 'Available').length;
+  const reservedCount = recentDonations.filter(d => d.status === 'Reserved').length;
+  const deliveredCount = recentDonations.filter(d => d.status === 'Delivered').length;
+
   const donationStats = [
-    { title: "Available", value: 3, icon: <Package size={24} />, color: "var(--primary)" },
-    { title: "Reserved", value: 1, icon: <Clock size={24} />, color: "var(--accent)" },
-    { title: "Delivered", value: 12, icon: <CheckCircle size={24} />, color: "var(--secondary)" }
-  ];
-
-  const recentDonations = [
-    { id: 1, type: "Baked Goods", qty: "20 portions", status: "Available", time: "2 hours ago" },
-    { id: 2, type: "Fresh Produce", qty: "15 kg", status: "Reserved", time: "5 hours ago" },
-    { id: 3, type: "Catered Meals", qty: "50 plates", status: "Delivered", time: "Yesterday" }
+    { title: "Available", value: availableCount, icon: <Package size={24} />, color: "var(--primary)" },
+    { title: "Reserved", value: reservedCount, icon: <Clock size={24} />, color: "var(--accent)" },
+    { title: "Delivered", value: deliveredCount, icon: <CheckCircle size={24} />, color: "var(--secondary)" }
   ];
 
   return (
@@ -72,16 +96,20 @@ const DonorDashboard = () => {
                 </tr>
               </thead>
               <tbody>
+                {loading && <tr><td colSpan="4" className="text-muted" style={{textAlign: "center", padding: '2rem'}}>Loading database sync...</td></tr>}
+                {!loading && recentDonations.length === 0 && (
+                  <tr><td colSpan="4" className="text-muted" style={{textAlign: "center", padding: '2rem'}}>No donations found. Submit your first one!</td></tr>
+                )}
                 {recentDonations.map((item) => (
                   <tr key={item.id}>
-                    <td className="font-medium">{item.type}</td>
-                    <td>{item.qty}</td>
+                    <td className="font-medium">{item.title}</td>
+                    <td>{item.quantity}</td>
                     <td>
                       <span className={`status-badge status-${item.status.toLowerCase()}`}>
                         {item.status}
                       </span>
                     </td>
-                    <td className="text-muted">{item.time}</td>
+                    <td className="text-muted">{new Date(item.created_at).toLocaleDateString()}</td>
                   </tr>
                 ))}
               </tbody>

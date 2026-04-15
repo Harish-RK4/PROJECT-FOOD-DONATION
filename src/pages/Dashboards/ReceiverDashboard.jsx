@@ -1,16 +1,34 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Search, Sparkles, Filter, Navigation } from 'lucide-react';
+import { supabase } from '../../lib/supabaseClient';
 import './ReceiverDashboard.css';
 
 const ReceiverDashboard = () => {
   const [searchQuery, setSearchQuery] = useState('');
+  const [nearbyDonations, setNearbyDonations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const nearbyDonations = [
-    { id: 1, title: 'Fresh Produce Box', dist: '1.2 km', type: 'Vegetables', time: 'Expires in 4 hrs' },
-    { id: 2, title: 'Catered Lunch Leftovers', dist: '3.5 km', type: 'Meals', time: 'Expires in 2 hrs' },
-    { id: 3, title: 'Bakery Surplus', dist: '4.1 km', type: 'Baked Goods', time: 'Expires tomorrow' },
-  ];
+  const fetchAvailableDonations = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('donations')
+        .select('*')
+        .eq('status', 'Available')
+        .order('created_at', { ascending: false });
+        
+      if (error) throw error;
+      setNearbyDonations(data || []);
+    } catch (error) {
+      console.error("Error fetching available donations:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAvailableDonations();
+  }, []);
 
   return (
     <div className="receiver-container">
