@@ -89,16 +89,24 @@ const NewDonationModal = ({ isOpen, onClose }) => {
 
               <div className="form-group">
                 <label>Food Photo</label>
-                <div className="upload-placeholder">
-                  <UploadCloud size={32} color="var(--primary)" />
-                  <p>Click to upload or drag and drop</p>
+                <label className="upload-placeholder" style={{ cursor: 'pointer', display: 'block' }}>
+                  <input type="file" style={{ display: 'none' }} accept="image/*" onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      alert("File " + file.name + " attached! (Storage backend coming soon)");
+                    }
+                  }} />
+                  <UploadCloud size={32} color="var(--primary)" style={{ margin: '0 auto' }} />
+                  <p>Click to browse files</p>
                   <span>SVG, PNG, JPG (max 5MB)</span>
-                </div>
+                </label>
               </div>
 
               <div className="form-actions">
                 <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
-                <button type="submit" className="btn btn-primary glow-effect">Post Donation</button>
+                <button type="submit" className="btn btn-primary glow-effect" disabled={loading}>
+                  {loading ? 'Submitting...' : 'Post Donation'}
+                </button>
               </div>
             </form>
           </motion.div>
