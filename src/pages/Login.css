@@ -7,12 +7,80 @@
   background-color: var(--background);
 }
 
-.auth-card {
+.auth-wrapper {
   width: 100%;
   max-width: 480px;
-  padding: 3rem 2.5rem;
-  background: var(--surface);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Custom Clerk Overrides */
+.clerk-custom-card {
+  background: var(--surface) !important;
+  border: 1px solid rgba(255, 255, 255, 0.05) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
+  padding: 2rem !important;
+  width: 100% !important;
+}
+
+.clerk-custom-title {
+  display: none !important; /* Managed by our custom header */
+}
+
+.clerk-custom-subtitle {
+  display: none !important; /* Managed by our custom header */
+}
+
+.clerk-custom-input {
+  background: var(--background) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--text-main) !important;
+  transition: all 0.2s !important;
+}
+
+.clerk-custom-input:focus {
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 1px var(--primary) !important;
+}
+
+.clerk-custom-btn {
+  background-color: var(--text-main) !important;
+  color: var(--background) !important;
+  font-weight: 600 !important;
+  text-transform: none !important;
+  transition: all 0.3s !important;
+}
+
+.clerk-custom-btn:hover {
+  background-color: #e4e4e7 !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 10px 20px rgba(255,255,255,0.1) !important;
+}
+
+.clerk-custom-link {
+  color: var(--primary) !important;
+  text-decoration: none !important;
+}
+
+.clerk-custom-link:hover {
+  text-decoration: underline !important;
+}
+
+.clerk-custom-text {
+  color: var(--text-main) !important;
+}
+
+.clerk-custom-label {
+  color: var(--text-muted) !important;
+}
+
+.clerk-custom-divider {
+  background-color: var(--border) !important;
+}
+
+.clerk-custom-divider-text {
+  color: var(--text-muted) !important;
 }
 
 .auth-header {

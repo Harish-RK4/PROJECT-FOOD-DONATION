@@ -1,20 +1,63 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@clerk/clerk-react';
 import { supabase } from '../lib/supabaseClient';
-import { X, UploadCloud } from 'lucide-react';
+import { X, UploadCloud, MapPin } from 'lucide-react';
+import { MapContainer, TileLayer, Marker, useMapEvents } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 import './NewDonationModal.css';
+
+// Fix for default Leaflet marker icons in React/Vite
+import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
+import markerIcon from 'leaflet/dist/images/marker-icon.png';
+import markerShadow from 'leaflet/dist/images/marker-shadow.png';
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconUrl: markerIcon,
+  iconRetinaUrl: markerIcon2x,
+  shadowUrl: markerShadow,
+});
+
+function LocationMarker({ position, setPosition }) {
+  useMapEvents({
+    click(e) {
+      setPosition(e.latlng);
+    },
+  });
+  return position === null ? null : (
+    <Marker position={position}></Marker>
+  );
+}
 
 const NewDonationModal = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
     title: '',
     quantity: '',
     expiryDate: '',
+    address: '',
     description: '',
   });
 
   const { userId } = useAuth();
   const [loading, setLoading] = useState(false);
+  
+  // Geographical Location state
+  const [position, setPosition] = useState(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      // Attempt to geolocate the user automatically
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
+        (err) => {
+          console.warn("Geolocation blocked or failed:", err);
+          // Default to a generic location if blocked
+          setPosition({ lat: 40.7128, lng: -74.0060 }); 
+        }
+      );
+    }
+  }, [isOpen]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,19 +69,19 @@ const NewDonationModal = ({ isOpen, onClose }) => {
           donor_id: userId || 'unknown_donor',
           title: formData.title,
           quantity: formData.quantity,
+          address: formData.address,
+          latitude: position?.lat || null,
+          longitude: position?.lng || null,
           expiry_date: formData.expiryDate ? new Date(formData.expiryDate).toISOString() : null,
           status: 'Available',
-          type: 'General', // Would be a dropdown selection in a larger app
+          type: 'General',
         }
       ]);
 
       if (error) throw error;
       
-      // If successful, reset and close
-      setFormData({ title: '', quantity: '', expiryDate: '', description: '' });
+      setFormData({ title: '', quantity: '', expiryDate: '', description: '', address: '' });
       onClose();
-      
-      // Optionally trigger a window reload or prop callback to refresh dashboard data
       window.location.reload(); 
     } catch (error) {
       console.error("Error inserting donation:", error);
@@ -64,6 +107,7 @@ const NewDonationModal = ({ isOpen, onClose }) => {
             initial={{ opacity: 0, y: 50, scale: 0.95 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.95 }}
+            style={{ maxHeight: '90vh', overflowY: 'auto' }}
           >
             <div className="modal-header">
               <h3>Post New Donation</h3>
@@ -88,6 +132,33 @@ const NewDonationModal = ({ isOpen, onClose }) => {
               </div>
 
               <div className="form-group">
+                <label>Pickup Address</label>
+                <input required type="text" placeholder="e.g. 123 Main St, New York" value={formData.address} onChange={e => setFormData({...formData, address: e.target.value})} />
+              </div>
+
+              <div className="form-group">
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <MapPin size={16} color="var(--primary)" /> Pin Precise Location
+                </label>
+                <div style={{ height: '200px', width: '100%', borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--border)' }}>
+                  {position ? (
+                    <MapContainer center={position} zoom={13} style={{ height: '100%', width: '100%' }}>
+                      <TileLayer
+                        attribution='&copy; OpenStreetMap contributors'
+                        url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      />
+                      <LocationMarker position={position} setPosition={setPosition} />
+                    </MapContainer>
+                  ) : (
+                    <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--surface-alt)' }}>
+                      <p style={{ color: 'var(--text-muted)' }}>Loading GPS Map...</p>
+                    </div>
+                  )}
+                </div>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.25rem', display: 'block' }}>Drag or click on the map to place the collection pin.</span>
+              </div>
+
+              <div className="form-group">
                 <label>Food Photo</label>
                 <label className="upload-placeholder" style={{ cursor: 'pointer', display: 'block' }}>
                   <input type="file" style={{ display: 'none' }} accept="image/*" onChange={(e) => {
@@ -102,7 +173,7 @@ const NewDonationModal = ({ isOpen, onClose }) => {
                 </label>
               </div>
 
-              <div className="form-actions">
+              <div className="form-actions" style={{ marginTop: '1rem' }}>
                 <button type="button" className="btn btn-secondary" onClick={onClose}>Cancel</button>
                 <button type="submit" className="btn btn-primary glow-effect" disabled={loading}>
                   {loading ? 'Submitting...' : 'Post Donation'}
