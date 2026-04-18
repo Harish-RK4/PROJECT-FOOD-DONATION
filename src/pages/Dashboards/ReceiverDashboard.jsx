@@ -23,8 +23,8 @@ const ReceiverDashboard = () => {
   const [nearbyDonations, setNearbyDonations] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // Default Map center
-  const defaultPosition = [40.7128, -74.0060];
+  // Default Map center: Bengaluru, Karnataka
+  const defaultPosition = [12.9716, 77.5946];
 
   const fetchAvailableDonations = async () => {
     try {

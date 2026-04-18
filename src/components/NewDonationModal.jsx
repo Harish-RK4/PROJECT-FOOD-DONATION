@@ -53,8 +53,8 @@ const NewDonationModal = ({ isOpen, onClose }) => {
         (pos) => setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude }),
         (err) => {
           console.warn("Geolocation blocked or failed:", err);
-          // Default to a generic location if blocked
-          setPosition({ lat: 40.7128, lng: -74.0060 }); 
+          // Default to Bengaluru, Karnataka if blocked
+          setPosition({ lat: 12.9716, lng: 77.5946 }); 
         }
       );
     }
