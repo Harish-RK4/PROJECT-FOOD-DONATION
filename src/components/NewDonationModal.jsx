@@ -42,6 +42,7 @@ const NewDonationModal = ({ isOpen, onClose }) => {
 
   const { userId } = useAuth();
   const [loading, setLoading] = useState(false);
+  const [imageData, setImageData] = useState(null);
   
   // Geographical Location state
   const [position, setPosition] = useState(null);
@@ -60,6 +61,31 @@ const NewDonationModal = ({ isOpen, onClose }) => {
     }
   }, [isOpen]);
 
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 600;
+        const scaleSize = MAX_WIDTH / img.width;
+        canvas.width = MAX_WIDTH;
+        canvas.height = img.height * scaleSize;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        
+        // Compress deeply to text to spoof cloud storage
+        const base64String = canvas.toDataURL('image/jpeg', 0.6);
+        setImageData(base64String);
+      };
+      img.src = event.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -74,6 +100,7 @@ const NewDonationModal = ({ isOpen, onClose }) => {
           contact_info: formData.contactInfo,
           latitude: position?.lat || null,
           longitude: position?.lng || null,
+          image_data: imageData,
           expiry_date: formData.expiryDate ? new Date(formData.expiryDate).toISOString() : null,
           status: 'Available',
           type: 'General',
@@ -83,6 +110,7 @@ const NewDonationModal = ({ isOpen, onClose }) => {
       if (error) throw error;
       
       setFormData({ title: '', quantity: '', expiryDate: '', description: '', address: '' });
+      setImageData(null);
       onClose();
       window.location.reload(); 
     } catch (error) {
@@ -168,15 +196,16 @@ const NewDonationModal = ({ isOpen, onClose }) => {
               <div className="form-group">
                 <label>Food Photo</label>
                 <label className="upload-placeholder" style={{ cursor: 'pointer', display: 'block' }}>
-                  <input type="file" style={{ display: 'none' }} accept="image/*" onChange={(e) => {
-                    const file = e.target.files[0];
-                    if (file) {
-                      alert("File " + file.name + " attached! (Storage backend coming soon)");
-                    }
-                  }} />
-                  <UploadCloud size={32} color="var(--primary)" style={{ margin: '0 auto' }} />
-                  <p>Click to browse files</p>
-                  <span>SVG, PNG, JPG (max 5MB)</span>
+                  <input type="file" style={{ display: 'none' }} accept="image/*" onChange={handleImageUpload} />
+                  {imageData ? (
+                    <img src={imageData} alt="preview" style={{width: '100%', maxHeight: '150px', objectFit: 'cover', borderRadius: 'var(--radius-sm)'}} />
+                  ) : (
+                    <div>
+                      <UploadCloud size={32} color="var(--primary)" style={{ margin: '0 auto' }} />
+                      <p>Click to browse files</p>
+                      <span>Takes live photos instantly</span>
+                    </div>
+                  )}
                 </label>
               </div>
 

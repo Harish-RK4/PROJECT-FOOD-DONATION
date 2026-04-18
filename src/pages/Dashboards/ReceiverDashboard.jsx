@@ -67,6 +67,18 @@ const ReceiverDashboard = () => {
     fetchAvailableDonations();
   }, []);
 
+  // Smart Search Algorithm (Heuristic Fuzzy Search)
+  const filteredDonations = nearbyDonations.filter(item => {
+    if (!searchQuery) return true;
+    const q = searchQuery.toLowerCase();
+    const searchableText = `${item.title} ${item.type} ${item.address} ${item.quantity}`.toLowerCase();
+    
+    // Split query into words to match partials (e.g. "fresh bread" matches "bread fresh")
+    const searchWords = q.split(' ');
+    
+    return searchWords.every(word => searchableText.includes(word));
+  });
+
   return (
     <div className="receiver-container">
       {/* Left Pane - List & Search */}
@@ -100,43 +112,51 @@ const ReceiverDashboard = () => {
 
         <div className="donations-list">
           {loading && <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginTop: '2rem' }}>Loading map data...</p>}
-          {!loading && nearbyDonations.length === 0 && (
-            <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginTop: '2rem' }}>No active donations nearby.</p>
+          {!loading && filteredDonations.length === 0 && (
+            <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginTop: '2rem' }}>No matching donations found.</p>
           )}
-          {nearbyDonations.map((item, index) => (
+          {filteredDonations.map((item, index) => (
             <motion.div 
               key={item.id} 
               className="donation-card glass-panel"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.1 }}
+              style={{ overflow: 'hidden' }}
             >
-              <div className="card-top">
-                <h4>{item.title}</h4>
-                <span className="time-badge">
-                  {item.expiry_date ? `Exp: ${new Date(item.expiry_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}` : 'No expiry'}
-                </span>
-              </div>
-              <p className="donation-type">{item.quantity} • {item.type}</p>
-              
-              <div className="card-bottom" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '0.5rem' }}>
-                <div className="location-info">
-                  <MapPin size={14} color="var(--primary)" />
-                  <span>{item.address || 'Address hidden pending claim'}</span>
+              {item.image_data && (
+                <div style={{ width: '100%', height: '120px', overflow: 'hidden', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                  <img src={item.image_data} alt={item.title} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
                 </div>
-                {item.contact_info && (
-                  <div className="location-info" style={{ color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                    <Phone size={14} color="var(--secondary)" />
-                    <span style={{ fontSize: '0.85rem' }}>{item.contact_info}</span>
+              )}
+              <div style={{ padding: item.image_data ? '0 1rem 1rem 1rem' : '1rem' }}>
+                <div className="card-top" style={{ paddingTop: item.image_data ? '1rem' : '0' }}>
+                  <h4>{item.title}</h4>
+                  <span className="time-badge">
+                    {item.expiry_date ? `Exp: ${new Date(item.expiry_date).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}` : 'No expiry'}
+                  </span>
+                </div>
+                <p className="donation-type">{item.quantity} • {item.type}</p>
+                
+                <div className="card-bottom" style={{ flexDirection: 'column', alignItems: 'flex-start', gap: '0.5rem' }}>
+                  <div className="location-info">
+                    <MapPin size={14} color="var(--primary)" />
+                    <span>{item.address || 'Address hidden pending claim'}</span>
                   </div>
-                )}
-                <button 
-                  onClick={() => handleClaim(item.id)}
-                  className="btn btn-primary claim-btn glow-effect" 
-                  style={{ width: '100%', marginTop: '0.5rem' }}
-                >
-                  Confirm Claim
-                </button>
+                  {item.contact_info && (
+                    <div className="location-info" style={{ color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+                      <Phone size={14} color="var(--secondary)" />
+                      <span style={{ fontSize: '0.85rem' }}>{item.contact_info}</span>
+                    </div>
+                  )}
+                  <button 
+                    onClick={() => handleClaim(item.id)}
+                    className="btn btn-primary claim-btn glow-effect" 
+                    style={{ width: '100%', marginTop: '0.5rem' }}
+                  >
+                    Confirm Claim
+                  </button>
+                </div>
               </div>
             </motion.div>
           ))}
