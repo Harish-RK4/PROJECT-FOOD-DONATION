@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Search, Sparkles, Filter, Navigation } from 'lucide-react';
+import { MapPin, Search, Sparkles, Filter, Navigation, Phone } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
